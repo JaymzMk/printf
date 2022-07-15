@@ -2,17 +2,20 @@
 
 /**
  * print_int - prints an integer
- * @args: integer to print
- * Return: no. of characters printed
+ * @l: va_list of arguments from _printf
+ * @f: pointer to the struct flags determining
+ * if a flag is passed to _printf
+ * Return: number of char printed
  */
-
-int print_int(va_list args)
+int print_int(va_list l, flags_t *f)
 {
-	int n, res;
+	int n = va_arg(l, int);
+	int res = count_digit(n);
 
-	n = va_arg(args, int);
-	res = count_digit(n);
-
+	if (f->space == 1 && f->plus == 0 && n >= 0)
+		res += _putchar(' ');
+	if (f->plus == 1 && n >= 0)
+		res += _putchar('+');
 	if (n <= 0)
 		res++;
 	print_number(n);
@@ -20,42 +23,58 @@ int print_int(va_list args)
 }
 
 /**
- * print_number - loops through an integer and prints its digits
- * @n: integer to print
+ * print_unsigned - prints an unsigned integer
+ * @l: va_list of arguments from _printf
+ * @f: pointer to the struct flags determining
+ * if a flag is passed to _printf
+ * Return: number of char printed
+ */
+int print_unsigned(va_list l, flags_t *f)
+{
+	unsigned int u = va_arg(l, unsigned int);
+	char *str = convert(u, 10, 0);
+
+	(void)f;
+	return (_puts(str));
+}
+
+/**
+ * print_number - helper function that loops through
+ * an integer and prints all its digits
+ * @n: integer to be printed
  */
 void print_number(int n)
 {
-	unsigned int x;
+	unsigned int n1;
 
 	if (n < 0)
 	{
 		_putchar('-');
-		x = -n;
+		n1 = -n;
 	}
 	else
-		x = n;
+		n1 = n;
 
-	if (x / 10)
-		print_number(x / 10);
-	_putchar((x % 10) + '0');
+	if (n1 / 10)
+		print_number(n1 / 10);
+	_putchar((n1 % 10) + '0');
 }
 
 /**
- * count_digit - counts number of digits in an integer
- * @x: integer to evaluate
+ * count_digit - returns the number of digits in an integer
+ * for _printf
+ * @i: integer to evaluate
  * Return: number of digits
  */
-int count_digit(int x)
+int count_digit(int i)
 {
-	unsigned int d;
+	unsigned int d = 0;
 	unsigned int u;
 
-	d = 0;
-
-	if (x < 0)
-		u = x * -1;
+	if (i < 0)
+		u = i * -1;
 	else
-		u = x;
+		u = i;
 	while (u != 0)
 	{
 		u /= 10;
